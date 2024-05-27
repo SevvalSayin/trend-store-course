@@ -1,14 +1,14 @@
 import { useState } from "react";
 import "./FormInputs.css";
 
-const inialValues ={
+const inialValues = {
   title: "",
   price: "",
   image: "",
   category: "",
 };
 
-const FormInputs = ({fetchProductsHandler}) => {
+const FormInputs = ({ fetchProductsHandler }) => {
   const [inputValues, setInputValues] = useState(inialValues);
 
   const handleInputChange = (e) => {
@@ -20,29 +20,29 @@ const FormInputs = ({fetchProductsHandler}) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefaylt();
+    e.preventDefault();
     const { image, ...rest } = inputValues;
     const newData = {
       ...rest,
       img: image,
     };
-
-    console.log(newData);
+    
     try {
       const response = await fetch(
-        "https://my-pos-application-api.onrender.com/api/products/get-all",
+        "https://my-pos-application-api.onrender.com/api/products/create-product",
         {
           method: "POST",
           body: JSON.stringify(newData),
           headers: {
-            "Content-Type": "application",
+            "Content-Type": "application/json",
           },
         }
       );
-     if(response.status===200){
-      fetchProductsHandler();
-      setInputValues(inialValues);
-     }
+
+      if (response.status === 200) {
+        fetchProductsHandler();
+        setInputValues(inialValues);
+      }
     } catch (error) {
       console.log(error.message);
     }
