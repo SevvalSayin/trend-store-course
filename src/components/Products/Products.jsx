@@ -7,32 +7,30 @@ import useHttp from "../../hooks/use-http";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
- const {isLoading,error,sendRequest: fetchProduct} = useHttp ();
-  
+  const { isLoading, error, sendRequest: fetchProduct } = useHttp();
 
-  const productList = products.map((product) => (
-    <ProductItem key={product.id} product={product} />
-  )).reverse();
+  const productList = products
+    .map((product) => <ProductItem key={product.id} product={product} />)
+    .reverse();
 
-const transformProducts=(productArr)=> {
-  const newProducts = productArr.map((item) => {
-    return {
-      id: item._id,
-      name: item.title,
-      ...item,
-    };
-    
-  });
-  setProducts(newProducts)
-};
+  const transformProducts = (productArr) => {
+    const newProducts = productArr.map((item) => {
+      return {
+        id: item._id,
+        name: item.title,
+        ...item,
+      };
+    });
+    setProducts(newProducts);
+  };
 
   useEffect(() => {
-    fetchProduct({
-      url:"https://my-pos-application-api.onrender.com/api/products/get-all",
-    },
-    transformProducts
-    
-  );
+    fetchProduct(
+      {
+        url: "https://my-pos-application-api.onrender.com/api/products/get-all",
+      },
+      transformProducts
+    );
   }, [fetchProduct]);
 
   let content = <p>Found no products!</p>;
@@ -50,17 +48,27 @@ const transformProducts=(productArr)=> {
   }
 
   const fetchProductsHandler = () => {
-    fetchProduct({
-      url:"https://my-pos-application-api.onrender.com/api/products/get-all",
-    },
-    transformProducts
-    
-  );
+    fetchProduct(
+      {
+        url: "https://my-pos-application-api.onrender.com/api/products/get-all",
+      },
+      transformProducts
+    );
+  };
+
+  const productAddHandler = (newProduct) => {
+    setProducts((prevProducts) => [
+      ...prevProducts,
+      { name: newProduct.title, img: newProduct.image, ...newProduct },
+    ]);
   };
 
   return (
     <main className="products-wrapper">
-      <FormInputs fetchProductsHandler={fetchProduct} />
+      <FormInputs
+        fetchProductsHandler={fetchProduct}
+        onAddProduct={productAddHandler}
+      />
       <ul className="products">{content}</ul>
       <button className="button" onClick={fetchProductsHandler}>
         Fetch Products
